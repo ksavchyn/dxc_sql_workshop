@@ -5,7 +5,7 @@ print(f'catalog = {catalog}')
 
 # COMMAND ----------
 
-# MAGIC %pip install mlflow
+# MAGIC %pip install mlflow typing_extensions==4.11.0
 
 # COMMAND ----------
 
