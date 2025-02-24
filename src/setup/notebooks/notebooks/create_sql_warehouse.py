@@ -27,6 +27,7 @@ try:
         cluster_size="Small",
         max_num_clusters=5,
         auto_stop_mins=10,
+        enable_serverless_compute=True,
         tags=sql.EndpointTags(
             custom_tags=[sql.EndpointTagPair(key="Owner", value=f'{user_name}')
                         ])).result()
