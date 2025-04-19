@@ -25,6 +25,7 @@ dbutils.widgets.text("volume", "raw_files")
 dbutils.widgets.text("dlt_pipeline_id", "", "DLT Pipeline ID deployed to create the bronze, silver, gold tables")
 dbutils.widgets.dropdown("compute_type", "serverless", ["serverless", "classic"])
 dbutils.widgets.text("node_type_id", "m7gd.2xlarge")
+dbutils.widgets.text("sas_token", "")
 
 # COMMAND ----------
 
@@ -35,6 +36,7 @@ volume = dbutils.widgets.get("volume")
 dlt_pipeline_id = dbutils.widgets.get("dlt_pipeline_id")
 compute_type = dbutils.widgets.get("compute_type")
 node_type_id = dbutils.widgets.get("node_type_id")
+sas_token = dbutils.widgets.get("sas_token")
 
 # COMMAND ----------
 
@@ -89,6 +91,7 @@ except:
 
 job_name = current_user_full_name + "_hls_sql_workshop"
 job_cluster_key = current_user_full_name + "_hls_sql_workshop"
+volume_job_cluster_key = current_user_full_name + "copy_files_hls_sql_workshop"
 job_description = f"Job to generate the HLS SQL Workshop"
 
 # COMMAND ----------
@@ -122,6 +125,30 @@ else:
 
 # COMMAND ----------
 
+# define classic compute cluster to copy files from ADLS to volume
+volume_task_cluster_spec = JobCluster(
+    job_cluster_key = volume_job_cluster_key
+    ,new_cluster = ClusterSpec(
+      spark_version = lts_version
+      ,spark_conf = {
+        "spark.master": "local[*, 4]",
+        "spark.databricks.cluster.profile": "singleNode"
+      }
+      ,custom_tags = {
+        "ResourceClass": "SingleNode"
+      }
+      ,spark_env_vars = {
+        "JNAME": "zulu17-ca-amd64"
+      }
+      ,node_type_id = node_type_id
+      ,data_security_mode = DataSecurityMode("SINGLE_USER")
+      ,runtime_engine = RuntimeEngine("STANDARD")
+      ,num_workers = 0
+    )
+  ) 
+
+# COMMAND ----------
+
 # DBTITLE 1,Print Job Inputs
 print(
 f"""
@@ -131,6 +158,7 @@ DLT Pipeline Id = {dlt_pipeline_id}
 
 Databricks Workflow Name: {job_name}
 Job cluster key: {job_cluster_key}
+Volume Job cluster key: {volume_job_cluster_key}
 Job description: {job_description}
 
 Cluster Specification Details: 
@@ -197,11 +225,11 @@ copy_files_to_volume = Task(
     task_key = "uc_setup"
   )]
   ,run_if = RunIf("ALL_DONE")
-  ,job_cluster_key = job_cluster_key  
+  ,job_cluster_key = volume_job_cluster_key  
   ,notebook_task = NotebookTask(
     notebook_path = f"/Workspace/Users/{user_name}/hls_sql_workshop/src/setup/notebooks/notebooks/copy_files_to_volume"
     ,source = Source("WORKSPACE")
-    ,base_parameters = dict("")
+    ,base_parameters = {"sas_token": sas_token}
   )
   ,timeout_seconds = 0
   ,email_notifications = TaskEmailNotifications()
@@ -212,10 +240,6 @@ copy_files_to_volume = Task(
   )
   ,webhook_notifications = WebhookNotifications()
 )
-
-# COMMAND ----------
-
-help(Task)
 
 # COMMAND ----------
 
@@ -396,6 +420,8 @@ print("Attempting to create the job. Please wait...\n")
 
 if compute_type == "classic":
   cluster_spec = [cluster_spec]
+else: 
+  cluster_spec = [volume_task_cluster_spec]
 
 j = w.jobs.create(
   name = job_name
