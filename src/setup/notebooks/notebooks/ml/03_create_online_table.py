@@ -20,7 +20,7 @@ spec = OnlineTableSpec(
 
 # ignore "already exists" error
 try:
- online_table_pipeline = w.online_tables.create(name=f'{catalog}.ai.feature_beneficiary_online', spec=spec)
+ online_table_pipeline = w.online_tables.create(spec=spec)
 except Exception as e:
  if "already exists" in str(e):
    pass
