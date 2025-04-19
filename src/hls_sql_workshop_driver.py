@@ -10,6 +10,7 @@
 # MAGIC       -  **SCHEMA**: The name of the schema that the DLT objects and the Volume will be created under. _It is recommended to leave the schema as the default value so that screenshots in the user instructions match what is seen in the environment_. This will be automatically created via the workflow that is generated assuming you have the appropriate permissions to create this object. This will create the schema using default storage.
 # MAGIC       - **VOLUME**: The name of the volume that will be created and that the CMS files will copied into. _It is recommended to leave the schema as the default value so that screenshots in the user instructions match what is seen in the environment_. This will be automatically created via the workflow that is generated assuming you have the appropriate permissions to create this object.
 # MAGIC       - **COMPUTE_TYPE**: This is very important! This is the type of compute you would like the workflow tasks and DLT pipeline to use. This should be based off what your workspace allows. It is recommended to set **compute_type == serverless** unless your workspace requires classic compute.
+# MAGIC       - **SAS_TOKEN**: The data files from cms live on an Azure storage account. To download these files, please provide the SAS token with read permissions to this storage account contained in the documentation.
 # MAGIC   3. **THIRD** execute this notebook. Once it executes successfully, it will generate a workflow that will: 
 # MAGIC         - setup UC (e.g. catalog, schemas, etc.) 
 # MAGIC         - copy CMS files to your volume
@@ -48,6 +49,8 @@ dbutils.widgets.text("catalog", "hls_sql_workshop")
 dbutils.widgets.text("schema", "cms")
 dbutils.widgets.text("volume", "raw_files")
 dbutils.widgets.dropdown("compute_type", "serverless", ["serverless", "classic"])
+dbutils.widgets.text("sas_token", "")
+dbutils.widgets.dropdown("cloud_provider", "Azure", ["AWS", "Azure", 'GCP'])
 
 # COMMAND ----------
 
@@ -57,6 +60,7 @@ catalog = dbutils.widgets.get("catalog")
 schema = dbutils.widgets.get("schema")
 volume = dbutils.widgets.get("volume")
 compute_type = dbutils.widgets.get("compute_type")
+sas_token = dbutils.widgets.get("sas_token")
 
 # COMMAND ----------
 
@@ -64,7 +68,9 @@ compute_type = dbutils.widgets.get("compute_type")
 # check cloud provider type
 try: 
   if compute_type == "serverless":
-    print(f'compute_type set to serverless, skipping step to check cloud provider')
+    cloud_provider = dbutils.widgets.get("cloud_provider")
+    print(f'compute_type: serverless')
+    print(f'Cloud provider: {cloud_provider}')    
   else:
     cloud_provider = spark.conf.get('spark.databricks.cloudProvider') # "Azure", "GCP", or "AWS"
     print(f'Cloud provider: {cloud_provider}')
@@ -79,15 +85,12 @@ except Exception as e:
 
 # DBTITLE 1,define default worker and driver type for cloud provider
 # define default worker and driver type for cloud provider
-if compute_type == "classic":
-  if cloud_provider == 'AWS':
-    node_type_id = "r6id.xlarge"
-  elif cloud_provider == 'GCP':
-    node_type_id = "n2-standard-8"
-  elif cloud_provider == 'Azure':
-    node_type_id = "Standard_D8ads_v5"
-else:
-  node_type_id = None
+if cloud_provider == 'AWS':
+  node_type_id = "r6id.xlarge"
+elif cloud_provider == 'GCP':
+  node_type_id = "n2-standard-8"
+elif cloud_provider == 'Azure':
+  node_type_id = "Standard_D8ads_v5"
 
 print(f'Node type ID: {node_type_id}')
 
@@ -141,7 +144,7 @@ displayHTML(f"<h1><a href={url}>Your DLT Pipeline can be found here!</a></h1>")
 
 # DBTITLE 1,Generate Workflow
 # run generate_workflow notebook
-result = dbutils.notebook.run("./setup/generate_workflow", timeout_seconds=0, arguments={"catalog": catalog, "schema": schema, "compute_type": compute_type, "node_type_id": node_type_id, "dlt_pipeline_id": pipeline_id})
+result = dbutils.notebook.run("./setup/generate_workflow", timeout_seconds=0, arguments={"catalog": catalog, "schema": schema, "compute_type": compute_type, "node_type_id": node_type_id, "dlt_pipeline_id": pipeline_id, "sas_token": sas_token})
 
 # get notebook outputs
 workflow_details = json.loads(result)
