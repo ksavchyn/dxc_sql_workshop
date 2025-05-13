@@ -15,12 +15,16 @@ w = WorkspaceClient()
 spec = OnlineTableSpec(
   primary_key_columns=["beneficiary_code"],
   source_table_full_name=f"{catalog}.ai.feature_beneficiary",
-  run_triggered={"full_refresh": True}
+  run_triggered=OnlineTableSpecTriggeredSchedulingPolicy.from_dict({"full_refresh": True})
   )
 
+online_table = OnlineTable(
+  name = f"{catalog}.ai.online_beneficiary",
+  spec = spec
+)
 # ignore "already exists" error
 try:
- online_table_pipeline = w.online_tables.create(spec=spec)
+ online_table_pipeline = w.online_tables.create(table=online_table)
 except Exception as e:
  if "already exists" in str(e):
    pass
