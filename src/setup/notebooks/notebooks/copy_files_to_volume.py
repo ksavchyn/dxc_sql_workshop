@@ -1,7 +1,7 @@
 # Databricks notebook source
 # create widgets
-dbutils.widgets.text('catalog', 'hls_sql_workshop')
-dbutils.widgets.text('schema', 'cms')
+dbutils.widgets.text('catalog', 'dxc_sql_workshop')
+dbutils.widgets.text('schema', 'employee_data')
 dbutils.widgets.text('volume', 'raw_files')
 dbutils.widgets.text('sas_token', "")
 
@@ -11,7 +11,7 @@ dbutils.widgets.text('sas_token', "")
 catalog = dbutils.widgets.get(name = "catalog")
 schema = dbutils.widgets.get(name = "schema")
 volume = dbutils.widgets.get(name = "volume")
-volume_path = f"/Volumes/{catalog}/{schema}/{volume}/medicare_claims"
+volume_path = f"/Volumes/{catalog}/{schema}/{volume}"
 sas_token = dbutils.widgets.get(name = "sas_token")
 
 # print values
@@ -23,38 +23,18 @@ print(f"""
 
 # COMMAND ----------
 
-# Replace these with your actual values
-source_account_name = "hlssqlworkshopsa"
-source_container_name = "cmsdata"
+## set configurations to use SAS token to connect to ADLS Gen2 Blob storage container
+source_container_name = "dxc"
+source_account_name = "dbsqlworkshop"
 
-# Set Spark config to use the SAS token
-spark.conf.set(
-    f"fs.azure.sas.{source_container_name}.{source_account_name}.blob.core.windows.net",
-    sas_token
-)
+spark.conf.set(f"fs.azure.account.auth.type.{source_account_name}.dfs.core.windows.net", "SAS")
+spark.conf.set(f"fs.azure.sas.token.provider.type.{source_account_name}.dfs.core.windows.net", "org.apache.hadoop.fs.azurebfs.sas.FixedSASTokenProvider")
+spark.conf.set(f"fs.azure.sas.fixed.token.{source_account_name}.dfs.core.windows.net", sas_token)
 
-# Construct the source URL
-source_url = f"wasbs://{source_container_name}@{source_account_name}.blob.core.windows.net/"
-
-# List files in the container
-files = dbutils.fs.ls(source_url)
-
-# Display the list of files
-display(files)
+source_url = f"abfss://{source_container_name}@{source_account_name}.dfs.core.windows.net"
+dbutils.fs.ls(source_url)
 
 # COMMAND ----------
 
-# define folders to check if exist
-folders_to_check = ['beneficiary_summary', 'carrier_claims', 'date', 'icd_codes', 'inpatient_claims', 'lookup', 'npi_code', 'outpatient_claims', 'prescription_drug_events']
-
-# check if folders already exist in volume. If not, copy the data over
-for folder in folders_to_check:
-  target = f"{volume_path}/{folder}"
-  try:
-    print(f'Checking if folder exists in volume. Folder: {folder}')
-    dbutils.fs.ls(f"{target}")
-    print(f'  Folder already exists in volume. Skipping copy.')
-  except:
-    source = f'{source_url}{folder}'
-    print(f'Path does not exist. Copying files from source to target \n source: {source} \n target: {target}')
-    dbutils.fs.cp(source, target, True)
+## copy csv files into Volume
+dbutils.fs.cp(source_url, volume_path, recurse=True)

@@ -1,7 +1,7 @@
 # Databricks notebook source
 # create widgets
-dbutils.widgets.text('catalog', 'hls_sql_workshop')
-dbutils.widgets.text('schema', 'cms')
+dbutils.widgets.text('catalog', 'dxc_sql_workshop')
+dbutils.widgets.text('schema', 'employee_data')
 dbutils.widgets.text('volume', 'raw_files')
 
 # COMMAND ----------
@@ -20,6 +20,10 @@ print(f"""
   volume = {volume_path}
   current_user = {current_user}
 """)
+
+# COMMAND ----------
+
+catalog
 
 # COMMAND ----------
 

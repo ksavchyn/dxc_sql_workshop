@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Welcome to the HLS SQL Workshop on Databricks!
+# MAGIC # Welcome to the DXC SQL Workshop on Databricks!
 # MAGIC ## Please refer to the README for additional documentation
 # MAGIC
 # MAGIC ### To setup the workshop, please follow these instructions:
@@ -39,14 +39,14 @@
 # MAGIC   - `USE SCHEMA`
 # MAGIC
 # MAGIC
-# MAGIC If you run into any issues, please contact Dan Davis (dan.davis@databricks.com)
+# MAGIC If you run into any issues, please contact Kat Savchyn (kateryna.savchyn@databricks.com)
 
 # COMMAND ----------
 
 # DBTITLE 1,Set Databricks Widgets
 # define widgets
-dbutils.widgets.text("catalog", "hls_sql_workshop")
-dbutils.widgets.text("schema", "cms")
+dbutils.widgets.text("catalog", "dxc_sql_workshop")
+dbutils.widgets.text("schema", "employee_data")
 dbutils.widgets.text("volume", "raw_files")
 dbutils.widgets.dropdown("compute_type", "serverless", ["serverless", "classic"])
 dbutils.widgets.text("sas_token", "")
