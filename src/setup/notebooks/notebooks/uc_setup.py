@@ -1,6 +1,6 @@
 # Databricks notebook source
 # create widgets
-dbutils.widgets.text('catalog', 'dxc_sql_workshop')
+dbutils.widgets.text('catalog', 'katsavchyn')
 dbutils.widgets.text('schema', 'employee_data')
 dbutils.widgets.text('volume', 'raw_files')
 
