@@ -1,7 +1,7 @@
 # Databricks notebook source
 # create widgets
 dbutils.widgets.text('catalog', 'katsavchyn')
-dbutils.widgets.text('schema', 'employee_data')
+dbutils.widgets.text('schema', 'employee_analytics')
 dbutils.widgets.text('volume', 'raw_files')
 
 # COMMAND ----------
@@ -23,14 +23,10 @@ print(f"""
 
 # COMMAND ----------
 
-catalog
-
-# COMMAND ----------
-
 # DBTITLE 1,create, use, and check catalog
 # MAGIC %sql
 # MAGIC --create, use, and check catalog
-# MAGIC create catalog if not exists ${catalog};
+# MAGIC --create catalog if not exists ${catalog};
 # MAGIC use catalog ${catalog};
 # MAGIC select current_catalog();
 

@@ -1,4 +1,4 @@
-# HLS SQL Workshop on Databricks
+# DXC SQL Workshop on Databricks
 
 The repository is can be used for setting up the Healthcare & Life Sciences SQL Workshop on Databricks.
 
@@ -9,11 +9,11 @@ We suggest executing any of the workflows and DLT using Serverless compute. If S
 
 - Additional collateral for the workshop [can be found here](https://drive.google.com/drive/folders/1DB4zRLcpRSrbElX8crQ99ALseVrlgAMb?usp=drive_link).
 
-Please reach out to Dan Davis (dan.davis@databricks.com) if you have any questions.
+Please reach out to Kat Savchyn (kateryna.savchyn@databricks.com) if you have any questions.
 
 ## Summary
 
-This guide explores how Databricks' Data Intelligence Platform transforms modern data operations with its powerful Data Warehousing capabilities. It demonstrates ingesting claims data from CMS using Databricks Workflows, highlighting the platform’s scalability, flexibility, and cost efficiency for large-scale data processing.
+This guide explores how Databricks' Data Intelligence Platform transforms modern data operations with its powerful Data Warehousing capabilities. It demonstrates ingesting workforce data using Databricks Workflows, highlighting the platform’s scalability, flexibility, and cost efficiency for large-scale data processing.
 
 Key features include:
   - **Databricks SQL**: Databricks SQL is the intelligent data warehouse. Built with DatabricksIQ, the Data Intelligence Engine that understands the uniqueness of your data, Databricks SQL democratizes analytics for technical and business users alik
@@ -25,29 +25,25 @@ Key features include:
 The workshop showcases how Databricks enables efficient, governed, and accessible data management for enterprise-grade solutions.
 
 ### Dataset
-The dataset used in this workshop is from the [CMS 2008-2010 Data Entrepreneurs’ Synthetic Public Use File (DE-SynPUF)](https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files/cms-2008-2010-data-entrepreneurs-synthetic-public-use-file-de-synpuf). The DE-SynPUF was created with the goal of providing a realistic set of claims data in the public domain while providing the very highest degree of protection to the Medicare beneficiaries’ protected health information.
+The dataset used in this workshop is the [Synthetic Employee Records Dataset from Kaggle](https://www.kaggle.com/datasets/ravindrasinghrana/employeedataset?resource=download). The Synthetic Employee Records Dataset is a simulated dataset created to explore various data analysis and machine learning techniques in the context of human resources and employee management. This synthetic dataset mirrors the structure and characteristics of real employee data, while all the information contained within is entirely fictional and generated for illustrative purposes.
 
 
 ## [Prerequisites](#prerequisites)
 In order to properly setup and successfully run the workshop, there are several prerequisites:
 - The code base is implemented to execute successfully ONLY on the Databricks platform (GCP, AZURE, OR AWS).
-- Databricks E2 Deployment
+- Azure Databricks Deployment
 - Workspace for the Workshop
-<br>There are several preferred options for running this workshop. Please work with your account team to decide which method is best for your customer
-  - Run the workshop in a CloudLabs environment.
-  - Run the workshop in a Databricks Express environment.
-  - Run the workshop in a Customer workspace.
-- Databricks Repos functionality.
-- Access to GitHub via public internet access.
+- Databricks Repos functionality
+- Access to GitHub via public internet access
 - Access to Serverless compute or compute using Databricks Runtime **14.3 LTS**
-- Unity Catalog enabled.  
+- Unity Catalog enabled
 
 ## [IMPORTANT NOTES](#important-notes)
 The contents of this workshop **are not** designed to be deployed multiple times in the same workspace. This is intended. 
 
 The names of objects created are not unique, and certain objects will not replace existing objects.
 
-- **Example**: The serving endpoint (name: predict_claims_amount) will not be recreated/updated when deploying this multiple times unless it is manually deleted.
+- **Example**: The serving endpoint (name: XXXX) will not be recreated/updated when deploying this multiple times unless it is manually deleted.
 
 # Workshop Setup
 Follow the steps below to setup your environment for the workshop.
@@ -67,7 +63,7 @@ Once you click Repo, you will be directed to the screen below, simply input the 
 
 ![](/src/readme_images/fork_repo.png "Fork Repo")
 
-Once the repo is created, navigate to the repo **hls_sql_workshop->src** and click on the notebook **hls_sql_workshop_driver**. 
+Once the repo is created, navigate to the repo **dxc_sql_workshop->src** and click on the notebook **dxc_sql_workshop_driver**. 
 
 ![](/src/readme_images/git_execution.png "")
 
@@ -112,7 +108,7 @@ If you selected classic compute during setup, you will see the job cluster specs
 ![](/src/readme_images/workflow_compute_pt_2.png "")
 
 ## Run the Workflow
-Once you have confirmed the settings, run the workflow to complete setup. The entire workflow will take ~1 hour to complete. The serving endpoint created at the end of the workflow will take some time to be available once the workflow completes.
+Once you have confirmed the settings, run the workflow to complete setup. The entire workflow will take ~XX hour to complete. The serving endpoint created at the end of the workflow will take some time to be available once the workflow completes.
 
 ## Confirm SQL Warehouse
 Once the workflow has completed successfully, confirm that the Serverless SQL Warehouse was created. If it was not created, please use an appropriate existing SQL Warehouse or create a new one manually. The selected SQL Warehouse should be the one used during the workshop.
@@ -149,7 +145,7 @@ Confirm the catalog and schemas were created. You should see the following schem
  
 
 > ### STEP 2: Confirm Tables, Volumes, and Models
-In the schema you created (default value is cms) you should see 23 bronze/silver/gold tables were created and 1 volume. The volume (default value is raw_files) should show the cms files that were created in the root directory called medicare_claims.
+In the schema you created (default value is XXXX) you should see XX bronze/silver/gold tables were created and 1 volume. The volume (default value is raw_files) should show the employee workforce files that were created in the root directory called employee_analytics.
 
 Tables created:
 

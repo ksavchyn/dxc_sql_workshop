@@ -24,7 +24,7 @@ print(f'User: {user_name}')
 try:
     created = w.warehouses.create(
         name=f'{warehouse_name}',
-        cluster_size="Small",
+        cluster_size="Medium",
         max_num_clusters=5,
         auto_stop_mins=10,
         enable_serverless_compute=True,
