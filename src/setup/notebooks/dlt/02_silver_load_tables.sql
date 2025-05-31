@@ -26,7 +26,7 @@ SELECT
   ,pde.Division as division
   ,pde.JobFunction as job_function
   ,pde.EmployeeStatus as employee_status
-  ,pde.TerminationType as termination_reason
+  ,pde.TerminationType as termination_type
   ,pde.EmployeeType as employment_type
   ,`pde`.`Performance Score` as performance_score
   ,`pde`.`Current Employee Rating` as current_rating
@@ -73,6 +73,7 @@ SELECT
   ,`ic`.`Training Program Name` as program_name
   ,`ic`.`Training Type` as training_type
   ,`ic`.`Training Outcome` as training_outcome
+  ,ic.Trainer as trainer
   ,cast(`ic`.`Training Duration(Days)` as int) as training_duration
   ,coalesce(cast(`ic`.`Training Cost` as double),0.0) as training_cost
   ,ic.update_timestamp as bronze_update_timestamp
